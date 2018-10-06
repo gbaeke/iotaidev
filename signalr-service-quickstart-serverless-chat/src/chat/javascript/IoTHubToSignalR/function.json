@@ -1,0 +1,19 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "eventHubMessages",
+      "direction": "in",
+      "eventHubName": "iotaidev-hub",
+      "cardinality": "many",
+      "connection": "IoTHubConnection"
+    },
+    {
+      "type": "signalR",
+      "name": "signalRMessages",
+      "hubName": "chat",
+      "direction": "out"
+    }
+  ]
+}
