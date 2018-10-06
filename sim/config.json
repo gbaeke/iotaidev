@@ -1,0 +1,17 @@
+{
+    "Interval": 5,
+    "IoTHubs": [
+        "iotaidev-hub.azure-devices.net"
+    ],
+    "SasTokens": [
+        "SharedAccessSignature sr=iotaidev-hub.azure-devices.net&sig=s2DrNhi2ZdKYwk5qzjP7kyqltmJo7rDbBqZZUKakzDw%3D&se=1570391799&skn=iothubowner"
+    ],
+    "DevGroups": [
+        {
+            "Prefix": "dev",
+            "DeviceNum": 50,
+            "Firmware": "1.0",
+            "IoTHub": 0
+        }
+    ]
+}
