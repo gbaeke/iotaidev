@@ -1,11 +1,6 @@
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
-    context.log('Body ' + JSON.stringify(req.body));
+    context.log('Issue title: ' + req.body.issue.title);
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: "Ok"
-        };
-    
 };

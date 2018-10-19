@@ -6,15 +6,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "webHookType": "github",
       "methods": [
         "post"
       ]
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
     }
   ]
 }
