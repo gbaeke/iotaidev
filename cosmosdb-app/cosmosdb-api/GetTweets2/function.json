@@ -1,0 +1,29 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "tweets",
+      "type": "cosmosDB",
+      "direction": "in",
+      "databaseName": "tweets",
+      "collectionName": "tweets",
+      "sender": "",
+      "sqlQuery": "SELECT c.sender, c.text, c.score, c.sentiment FROM c WHERE c.sender = {sender}",
+      "connectionStringSetting": "CosmosDBConnection"
+    }
+  ]
+}

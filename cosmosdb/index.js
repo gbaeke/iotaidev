@@ -88,6 +88,6 @@ createDatabase()
     .then(() => readContainer())
     .then(() => createTweets())
     .then(() => queryTweets())
-    .then(() => cleanup())
+    //.then(() => cleanup())
     .then(() => { console.log("Great success"); process.exit(0) })
     .catch((error) => { console.log(JSON.stringify(error));process.exit(1)});
