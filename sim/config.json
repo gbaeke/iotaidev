@@ -9,7 +9,7 @@
     "DevGroups": [
         {
             "Prefix": "dev",
-            "DeviceNum": 50,
+            "DeviceNum": 5,
             "Firmware": "1.0",
             "IoTHub": 0
         }
