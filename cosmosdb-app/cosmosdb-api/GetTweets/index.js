@@ -6,6 +6,9 @@ module.exports = async function (context, req) {
         connectionPolicy: { DisableSSLVerification: true }
     });
 
+    sender = context.bindingData.sender;
+    context.log("Sender is %s", sender);
+
     databaseId = process.env.COSMOSDB_DATABASE;
     containerId = process.env.COSMOSDB_COLLECTION;
 
@@ -14,7 +17,7 @@ module.exports = async function (context, req) {
         parameters: [
             {
                 name: "@sender",
-                value: "Geert Baeke"
+                value: sender
             }
         ]
     };

@@ -6,6 +6,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
+      "route": "tweet2/get/{sender}",
       "methods": [
         "get"
       ]

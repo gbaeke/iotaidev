@@ -6,9 +6,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
+      "route": "tweet/get/{sender}",
       "methods": [
-        "get",
-        "post"
+        "get"
       ]
     },
     {

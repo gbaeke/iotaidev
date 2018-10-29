@@ -97,7 +97,7 @@
                     console.log(token);
 
                     // load tweets
-                    axios.get('https://fniotaidev.azurewebsites.net/api/GetTweets', getAxiosConfig(token))
+                    axios.get('https://fniotaidev.azurewebsites.net/api/tweet/get/Geert Baeke', getAxiosConfig(token))
                       .then(function(response){
                           var tweets=response.data;
                           tweets.reverse().forEach(function(tweet){

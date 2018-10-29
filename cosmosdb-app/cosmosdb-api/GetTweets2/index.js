@@ -1,8 +1,10 @@
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
+    sender = context.bindingData.sender;
+
     // sender is expected as a query parameter
-    if(req.query.sender) {
+    if(sender) {
         var tweets = context.bindings.tweets;
     
         context.res = {
