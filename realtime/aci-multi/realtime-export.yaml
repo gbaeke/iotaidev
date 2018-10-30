@@ -1,0 +1,33 @@
+additional_properties: {}
+apiVersion: '2018-06-01'
+location: westeurope
+name: realtime
+properties:
+  containers:
+  - name: realtime
+    properties:
+      environmentVariables:
+      - name: PORT
+        value: '80'
+      - name: REDISHOST
+        value: iotaidev.redis.cache.windows.net
+      - name: REDISKEY
+        value: oZ4nOFypOqHtkClWwtVXB4uFPOyWCVc0oj0IJUcKj3M=
+      image: gbaeke/iotaidev
+      ports:
+      - port: 80
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+  ipAddress:
+    ip: 40.113.110.26
+    ports:
+    - port: 80
+      protocol: TCP
+    type: Public
+  osType: Linux
+  restartPolicy: Always
+tags: {}
+type: Microsoft.ContainerInstance/containerGroups

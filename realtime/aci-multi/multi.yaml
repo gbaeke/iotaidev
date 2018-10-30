@@ -1,0 +1,40 @@
+apiVersion: 2018-06-01
+location: westeuope
+name: realtime-app
+properties:
+  containers:
+  - name: realtime-service
+    properties:
+      environmentVariables:
+      - name: PORT
+        value: '80'
+      - name: REDISHOST
+        value: ''
+      - name: REDISPORT
+        value: '6379'
+      image: gbaeke/iotaidev
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 80
+  - name: realtime-redis
+    properties:
+      image: library/redis
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 6379
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: '80'
+    - protocol: tcp
+      port: '6379'
+tags: null
+type: Microsoft.ContainerInstance/containerGroups

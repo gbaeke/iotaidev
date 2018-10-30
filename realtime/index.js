@@ -7,9 +7,16 @@ var io = require('socket.io')(server, { origins: '*:*'});
 var port = process.env.PORT||8888;
 
 
-var subscriber=require("redis").createClient(6380, process.env.REDISHOST, 
-    {auth_pass: process.env.REDISKEY,
-     tls: {servername:  process.env.REDISHOST}});
+if(process.env.REDISPORT=='6379') {
+    console.log("Not using TLS and authentication");
+    var subscriber=require("redis").createClient(process.env.REDISPORT||6380, process.env.REDISHOST);
+        
+} else {
+    console.log("Using TLS and authentication");
+    var subscriber=require("redis").createClient(process.env.REDISPORT||6380, process.env.REDISHOST, 
+        {auth_pass: process.env.REDISKEY,
+        tls: {servername:  process.env.REDISHOST}}); 
+}
 
 
 app.get('/', function(req,res,next){
