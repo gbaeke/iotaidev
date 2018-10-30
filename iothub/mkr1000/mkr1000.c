@@ -168,7 +168,7 @@ void loop() {
     Serial.println(postBuffer);
 
     // publish message to MQTT server
-    client.publish("devices/mkr1000/messages/events/", postBuffer);
+    client.publish("devices/{deviceId}/messages/events/", postBuffer);
   }
 
   client.loop();
