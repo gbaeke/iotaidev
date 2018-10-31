@@ -30,11 +30,13 @@ properties:
       - port: 6379
   osType: Linux
   ipAddress:
+    dnsNameLabel: iotaidevrt
     type: Public
     ports:
     - protocol: tcp
       port: '80'
     - protocol: tcp
       port: '6379'
+  restartPolicy: Always
 tags: null
 type: Microsoft.ContainerInstance/containerGroups

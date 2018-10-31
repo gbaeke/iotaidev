@@ -1,0 +1,32 @@
+additional_properties: {}
+apiVersion: '2018-06-01'
+location: westeurope
+name: gebatest
+properties:
+  containers:
+  - name: gebatest
+    properties:
+      command: []
+      environmentVariables:
+      - name: PORT
+        value: '80'
+      image: gbaeke/iotaidev:latest
+      ports:
+      - port: 80
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+  ipAddress:
+    dnsNameLabel: iotaidevrt
+    fqdn: iotaidevrt.westeurope.azurecontainer.io
+    ip: 137.117.128.235
+    ports:
+    - port: 80
+      protocol: TCP
+    type: Public
+  osType: Linux
+  restartPolicy: Always
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
