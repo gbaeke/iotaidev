@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.5.2",
     "express": "^4.15.2",
     "redis": "^2.7.1",
     "socket.io": "^1.7.3"
