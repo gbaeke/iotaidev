@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "iotHubName": {
+            "value": "geba-s1"
+        },
+        "appName": {
+            "value": "rtfunc"
+        },
+        "storageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "policyName": {
+            "value": "functionpolicy"
+        },        
+        "redisHostNamePrefix": {
+            "value": "redis"
+        },
+        "redisHostCapacity": {
+            "value": 0
+        }
+    }
+}

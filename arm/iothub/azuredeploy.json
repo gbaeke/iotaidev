@@ -1,0 +1,186 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "tagValues": {
+            "type": "object",
+            "defaultValue": {
+                "environment": "prod",
+                "project": "realtime",
+                "billTo": "IT",
+                "managedBy": "user@domain.com"
+            }
+        },
+        "iotHubName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the IoT Hub"
+            }
+        },
+        "policyName": {
+            "type": "string",
+            "metadata":{
+                "description": "Name of policy to create"
+            }         
+
+        },
+        "appName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the function app that you wish to create."
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_ZRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "Storage Account type"
+            }
+        },
+        "redisHostNamePrefix": {
+            "type": "string",
+            "maxLength": 15,
+            "metadata": {
+                "description": "The hostname of the Redis server"
+            }
+        },
+        "redisHostCapacity": {
+            "type": "int",
+            "allowedValues": [0,1,2],
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The capacity in basic tier C family only 0, 1 or 2"
+            }
+        }
+    },
+    "variables": {
+        "functionAppName": "[parameters('appName')]",
+        "hostingPlanName": "[parameters('appName')]",
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunc')]",
+        "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "redisHostName": "[concat(parameters('redisHostNamePrefix'), uniqueString(resourceGroup().id))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('redisHostName')]",
+            "type": "Microsoft.Cache/Redis",
+            "apiVersion": "2016-04-01",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tagValues')]",
+            "properties": {
+                "sku": {
+                    "name": "Basic",
+                    "family": "C",
+                    "capacity": "[parameters('redisHostCapacity')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tagValues')]",
+            "properties": {
+                "accountType": "[parameters('storageAccountType')]"
+            }
+        },
+        {
+            "name": "[parameters('iotHubName')]",
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2016-02-03",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tagValues')]",
+            "properties": {
+                "authorizationPolicies": [
+                    {
+                        "keyName": "iothubowner",
+                        "rights": "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
+                    },
+                    {
+                        "keyName": "[parameters('policyName')]",
+                        "rights": "ServiceConnect"
+                    }],
+                "features": "None"
+                },
+                "sku": {
+                    "name": "S1",
+                    "capacity": 1
+                }
+            },
+            {
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2015-04-01",
+                "name": "[variables('hostingPlanName')]",
+                "location": "[resourceGroup().location]",
+                "tags": "[parameters('tagValues')]",
+                "properties": {
+                    "name": "[variables('hostingPlanName')]",
+                    "computeMode": "Dynamic",
+                    "sku": "Dynamic"
+                }
+            },
+            {
+                "apiVersion": "2015-08-01",
+                "type": "Microsoft.Web/sites",
+                "name": "[variables('functionAppName')]",
+                "location": "[resourceGroup().location]",
+                "tags": "[parameters('tagValues')]",
+                "kind": "functionapp",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                    "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                ],
+                "properties": {
+                    "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                    "siteConfig": {
+                        "appSettings": [
+                            {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTSHARE",
+                                "value": "[toLower(variables('functionAppName'))]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            },
+                            {
+                                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                                "value": "6.5.0"
+                            },
+                            {
+                                "name": "ParticleConnection",
+                                "value": "[concat('Endpoint=', reference(parameters('iotHubName')).eventHubEndpoints.events.endpoint, ';SharedAccessKeyName=', parameters('policyName'), ';SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys', parameters('iotHubName'),parameters('policyName')),'2016-02-03').primaryKey)]"
+                            },
+                            {
+                                "name": "REDISHOST",
+                                "value": "[reference(variables('redisHostName')).hostName]"
+                            },
+                            {
+                                "name": "REDISKEY",
+                                "value": "[listKeys(resourceId('Microsoft.Cache/Redis', variables('redisHostName')),'2016-04-01').primaryKey]"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "outputs": {}
+    }

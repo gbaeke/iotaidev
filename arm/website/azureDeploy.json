@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+           "type": "string",
+           "defaultValue": "gebatestapp",
+           "metadata": {
+                "description": "Web app name"
+            }
+        },
+        "planName": {
+           "type": "string",
+           "defaultValue": "gebatestplan",
+           "metadata": {
+                "description": "Web app plan"
+            }
+        },
+        "repoURL": {
+           "type": "string",
+           "metadata": {
+                "description": ""
+            }
+        },
+        "branch": {
+           "type": "string",
+           "metadata": {
+                "description": ""
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[parameters('planName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "tags": {
+                "displayName": "[parameters('planName')]"
+            },
+            "properties": {
+                "name": "[parameters('planName')]"
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[parameters('siteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]": "Resource",
+                "displayName": "[parameters('siteName')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"
+            ],
+            "properties": {
+                "name": "[parameters('siteName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"
+            },
+            "resources": [
+                {
+                  "apiVersion": "2015-08-01",
+                  "name": "web",
+                  "type": "sourcecontrols",
+                  "dependsOn": [
+                    "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]"
+                  ],
+                  "properties": {
+                    "RepoUrl": "[parameters('repoURL')]",
+                    "branch": "[parameters('branch')]",
+                    "IsManualIntegration": true
+                  }
+                }
+              ]
+        }
+        
+    ],
+    "outputs": {}
+}

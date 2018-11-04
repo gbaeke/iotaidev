@@ -14,7 +14,7 @@
 //
 // Using the Azure CLI:
 // az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyNodeDevice --output table
-var connectionString = 'HostName=iotaidev-hub.azure-devices.net;DeviceId=testdevice;SharedAccessKey=FmrXof1cKCEXjl1cU5aDRJ90yosj6o41w0lQ+poOWnE=';
+var connectionString = '';
 
 // Using the Node.js Device SDK for IoT Hub:
 //   https://github.com/Azure/azure-iot-sdk-node
